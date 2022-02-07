@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Sunarc_Splitorderpro
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * Sunarc_Splitorderpro
+ *
+ * @category Sunarc_Splitorderpro
+ * @package Sunarc_Splitorderpro
+ * @copyright Copyright (c) 2014 Zowta LLC (http://www.sunarctechnologies.com)
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @author Sunarc_Splitorderpro Team support@sunarctechnologies.com
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="sunarc" translate="label" sortOrder="100">
+            <label>Sunarc</label>
+        </tab>
+        <section id="orderattachment" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Order Attachment</label>
+            <tab>sunarc</tab>
+            <resource>Sunarc_Orderattachment::orderattachment_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Configurations</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Orderattachment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

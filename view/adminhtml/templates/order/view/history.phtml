@@ -1,0 +1,212 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Sales\Block\Adminhtml\Order\View\History $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+$ob = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $ob->get('Magento\Store\Model\StoreManagerInterface');
+$currentStore = $storeManager->getStore();
+$baseUrl = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+?>
+<div id="order_history_block" class="edit-order-comments">
+    <?php if ($block->canAddComment()): ?>
+        <div class="order-history-block" id="history_form">
+            <div class="admin__field">
+                <label for="history_status" class="admin__field-label"><?= $block->escapeHtml(__('Status')) ?></label>
+                <div class="admin__field-control">
+                    <select name="history[status]" id="history_status" class="admin__control-select">
+                        <?php foreach ($block->getStatuses() as $_code => $_label): ?>
+                            <option value="<?= $block->escapeHtmlAttr($_code) ?>"
+                                <?php if ($_code == $block->getOrder()->getStatus()): ?> selected="selected"
+                                <?php endif; ?>>
+                                <?= $block->escapeHtml($_label) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="admin__field">
+            </div>
+            <form id="attachment_form" method="POST" enctype="multipart/form-data">
+                <div class="admin__field">
+                    <label for="history_attachment" class="admin__field-label">
+                        <?= $block->escapeHtml(__('Attachment')) ?>
+                    </label>
+                    <div class="admin__field-control">
+                        <input type="file" name="attachment" id="history_attachment" class="admin__control-file">
+                    </div>
+                </div>
+                <!-- <button type="button" id="submitajax">Submit</button> -->
+            </form>
+            <div class="admin__field">
+            </div>
+            <div class="admin__field">
+                <label for="history_comment" class="admin__field-label">
+                    <?= $block->escapeHtml(__('Comment')) ?>
+                </label>
+                <div class="admin__field-control">
+                    <textarea name="history[comment]"
+                              rows="3"
+                              cols="5"
+                              id="history_comment"
+                              class="admin__control-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="admin__field">
+                <div class="order-history-comments-options">
+                    <div class="admin__field admin__field-option">
+                        <?php if ($block->canSendCommentEmail()): ?>
+                            <input name="history[is_customer_notified]"
+                                   type="checkbox"
+                                   id="history_notify"
+                                   class="admin__control-checkbox"
+                                   value="1" />
+                            <label class="admin__field-label" for="history_notify">
+                                <?= $block->escapeHtml(__('Notify Customer by Email')) ?>
+                            </label>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="admin__field admin__field-option">
+                        <input name="history[is_visible_on_front]"
+                               type="checkbox"
+                               id="history_visible"
+                               class="admin__control-checkbox"
+                               value="1" />
+                        <label class="admin__field-label" for="history_visible">
+                            <?= $block->escapeHtml(__('Visible on Storefront')) ?>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="order-history-comments-actions">
+                    <button type="button" class='action-save action-secondary' id="submitButton">
+                        Submit Comment
+                    </button>
+                </div>
+            </div>
+        </div>
+    <?php endif;?>
+
+    <ul class="note-list">
+    <?php foreach ($block->getOrder()->getStatusHistoryCollection(true) as $_item): ?>
+        <li class="note-list-item">
+            <span class="note-list-date">
+                <?= /* @noEscape */ $block->formatDate($_item->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?>
+            </span>
+            <span class="note-list-time">
+                <?= /* @noEscape */ $block->formatTime($_item->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?>
+            </span>
+            <span class="note-list-status"><?= $block->escapeHtml($_item->getStatusLabel()) ?></span>
+            <span class="note-list-status">
+
+                <?php if ($_item->getAttachment()): ?>
+                    <a href="<?=$baseUrl?>order_attachment/<?=$_item->getAttachment()?>" target="_blank">Attachment</a>
+                <?php else: ?>
+                    No Attachment
+                <?php endif; ?>
+            </span>
+            <span class="note-list-customer">
+                <?= $block->escapeHtml(__('Customer')) ?>
+                <?php if ($block->isCustomerNotificationNotApplicable($_item)): ?>
+                    <span class="note-list-customer-notapplicable">
+                        <?= $block->escapeHtml(__('Notification Not Applicable')) ?>
+                    </span>
+                <?php elseif ($_item->getIsCustomerNotified()): ?>
+                    <span class="note-list-customer-notified"><?= $block->escapeHtml(__('Notified')) ?></span>
+                <?php else: ?>
+                    <span class="note-list-customer-not-notified"><?= $block->escapeHtml(__('Not Notified')) ?></span>
+                <?php endif; ?>
+            </span>
+            <?php if ($_item->getComment()): ?>
+                <div class="note-list-comment">
+                    <?= $block->escapeHtml($_item->getComment(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+                </div>
+            <?php endif; ?>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+    <?php $scriptString = <<<script
+        require(['prototype'], function(){
+            if($('order_status'))$('order_status').update('{$block->escapeJs($block->getOrder()->getStatusLabel())}');
+        });
+script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+</div>
+
+
+<script>
+        document.getElementById("submitButton").addEventListener("click", function() {
+            var area = $('order_history_block').parentNode;
+            var url = "<?= $block->getSubmitUrl(); ?>";
+            var orderId = "<?= $block->getOrder()->getId(); ?>";
+            console.log(orderId);
+            console.log(url);
+
+            if ($(area)) {
+                var fields = $(area).select('input', 'select', 'textarea');
+                var data = Form.serializeElements(fields, true);
+
+                url += url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true';
+
+                //File upload
+                var file = document.getElementById('history_attachment').files[0];
+                var form;
+                if (typeof file == 'undefined') {
+                    alert('Pleae choose a file');
+                    return false;
+                }
+                form = new FormData(document.getElementById('attachment_form'));
+                form.append('form_key',window.FORM_KEY);
+                form.append('attachment', file);
+                console.log(data);
+                jQuery.ajax({
+                    url: "<?= $block->getUrl('orderattachment/fileupload/fileupload'); ?>",
+                    type: 'post',
+                    mimeTypes: 'multipart/form-data',
+                    data: form,
+                    cache: false,
+                    contentType: false,  //this is must required
+                    processData: false, //this is must required
+                    beforeSend: function() {
+                        jQuery('body').trigger('processStart');
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        new Ajax.Request(url, {
+                            parameters: $H(data),
+                            loaderArea: area,
+                            async: false,
+                            onSuccess: function (transport) {
+                                try {
+                                    if (transport.responseText.isJSON()) {
+                                        var response = transport.responseText.evalJSON();
+
+                                        if (response.error) {
+                                            alert(response.message);
+                                        }
+
+                                        if (response.ajaxExpired && response.ajaxRedirect) {
+                                            setLocation(response.ajaxRedirect);
+                                        }
+                                    } else {
+                                        $(area).update(transport.responseText);
+                                    }
+                                }
+                                catch (e) {
+                                    $(area).update(transport.responseText);
+                                }
+                            }
+                        });
+                        jQuery('body').trigger('processStop');
+                    }
+                });                
+            }
+        })
+</script>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Sunarc_SplitorderByShippingMethod extension
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the SunArc Technologies License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://sunarctechnologies.com/end-user-agreement/
+ * 
+ * @category  Sunarc
+ * @package   Sunarc_SplitorderByShippingMethod
+ * @copyright Copyright (c) 2017
+ * @license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="orderattachment" frontName="orderattachment">
+            <module name="Sunarc_Orderattachment"/>
+        </route>
+    </router>
+</config>

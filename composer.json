@@ -1,0 +1,35 @@
+{
+    "name": "sunarctech/orderattachment",
+    "description": "Order attachment for magento2",
+    "keywords": [
+        "magento2",
+        "order attachment",
+        "order attachment admin panel",
+        "sunarc"
+    ],
+    "version": "1.0.0",
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0|7.0.1|7.0.2|7.0.4|~7.0.6|~7.1.0|~7.2.0|~7.3.0|~7.4.0"
+    },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "Rajneesh Vyas",
+            "email": "rajneesh.vyas@sunarctechnologies.com",
+            "homepage": "http://sunarctechnologies.com/",
+            "role": "Leader"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Sunarc\\Orderattachment\\": ""
+        }
+    }
+}

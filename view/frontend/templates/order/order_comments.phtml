@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php 
+/** @var  $block \Magento\Sales\Block\Order\View*/
+
+$ob = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $ob->get('Magento\Store\Model\StoreManagerInterface');
+$currentStore = $storeManager->getStore();
+$baseUrl = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+
+?>
+
+<?php $_history = $block->getOrder()->getVisibleStatusHistory() ?>
+<?php if (!empty($_history)): ?>
+    <div class="block block-order-details-comments">
+        <div class="block-title"><strong><?= $block->escapeHtml(__('About Your Order')) ?></strong></div>
+        <div class="block-content">
+            <dl class="order-comments">
+                <?php foreach ($_history as $_historyItem): ?>
+                    <dt class="comment-date">
+                        <?= /* @noEscape */
+                        $block->formatDate($_historyItem->getCreatedAt(), \IntlDateFormatter::MEDIUM, true) ?>
+                    </dt>
+                    <dd class="comment-content">
+                        <?= $block->escapeHtml($_historyItem->getComment())?>&nbsp;|&nbsp;
+                        <?php if ($_historyItem->getAttachment()):?>
+                            <a href="<?=$baseUrl?>order_attachment/<?=$_historyItem->getAttachment()?>" target="_blank">Attachment</a>
+                        <?php else: ?>
+                            No Attachment
+                        <?php endif ?>
+                    </dd>
+                <?php endforeach; ?>
+            </dl>
+        </div>
+    </div>
+<?php endif; ?>
